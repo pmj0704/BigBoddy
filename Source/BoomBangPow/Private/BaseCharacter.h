@@ -4,20 +4,39 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Enemy.generated.h"
+#include "BaseCharacter.generated.h"
 
 UCLASS()
-class AEnemy : public ACharacter
+class ABaseCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AEnemy();
+	ABaseCharacter();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+public:
+	struct Data  //데이터
+	{
+		int hp;
+		int damage;
+	};
+public:
+	 bool bUnstoppable; //저지불가
+	 bool bInvincible; // 무적
+public:
+
+	virtual void Move(); //이동
+
+	virtual void Attack(); //공격
+
+	virtual void Damaged(); //데미지 받았을때
+
+	virtual void ChangeHp(); //HP세팅
+	
 
 public:	
 	// Called every frame
@@ -26,8 +45,4 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-public:
-	// 적 AI 관련 컴포넌트 클래스
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FSMComp)
-		class UEnemyFSM* fsm;
 };
