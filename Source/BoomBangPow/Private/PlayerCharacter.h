@@ -15,6 +15,16 @@ class APlayerCharacter : public ABaseCharacter
 	GENERATED_BODY()
 		
 public: 
+	UFUNCTION(BlueprintCallable, Category = BaseFuction)
 	virtual void Move() override;
+
+	UFUNCTION(BlueprintCallable, Category = BaseFuction)
+	virtual void Attack() override;
+
+	UFUNCTION(BlueprintCallable, Category = BaseFuction)
+	virtual void Damaged() override;
+
+	UFUNCTION(BlueprintCallable, Category = BaseFuction)
+	virtual void ChangeHp() override;
 
 };

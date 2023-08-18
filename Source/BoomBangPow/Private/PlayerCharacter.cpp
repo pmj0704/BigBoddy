@@ -3,3 +3,19 @@
 
 #include "PlayerCharacter.h"
 
+void APlayerCharacter::Move()
+{
+
+}
+
+void APlayerCharacter::Attack()
+{
+}
+
+void APlayerCharacter::Damaged()
+{
+}
+
+void APlayerCharacter::ChangeHp()
+{
+}
