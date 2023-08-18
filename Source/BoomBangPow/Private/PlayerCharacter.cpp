@@ -19,3 +19,11 @@ void APlayerCharacter::Damaged()
 void APlayerCharacter::ChangeHp()
 {
 }
+
+void APlayerCharacter::MoveForawrd(const FInputActionValue& Value)
+{
+}
+
+void APlayerCharacter::MoveRight(const FInputActionValue& Value)
+{
+}
