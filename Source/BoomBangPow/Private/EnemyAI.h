@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "GameFramework/Character.h"
 #include "EnemyAI.generated.h"
 
 /**
@@ -14,4 +15,20 @@ class AEnemyAI : public AAIController
 {
 	GENERATED_BODY()
 	
+public:
+	AEnemyAI();
+	virtual void OnPossess(APawn* InPawn) override;
+	
+	static const FName Key_DefaultPos;
+	static const FName Key_PatrolPos;
+
+	void RunAI();
+	void StopAI();
+
+private:
+	UPROPERTY()
+	class UBehaviorTree* BTAsset;
+
+	UPROPERTY()
+	class UBlackboardData* BBAsset;
 };
