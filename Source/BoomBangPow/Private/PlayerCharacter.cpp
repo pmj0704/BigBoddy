@@ -2,7 +2,65 @@
 
 
 #include "PlayerCharacter.h"
-#include "C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include<GameFramework/CharacterMovementComponent.h>
+
+#include "EnhancedInputComponent.h"
+
+APlayerCharacter::APlayerCharacter()
+{
+	PrimaryActorTick.bCanEverTick = true;
+
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> TempMesh(L"/Script/Engine.SkeletalMesh'/Game/SCK_Casual01/Models/Premade_Characters/MESH_PC_02.MESH_PC_02'");
+
+
+	if (TempMesh.Succeeded())
+	{
+		GetMesh()->SetSkeletalMesh(TempMesh.Object);
+		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
+	}
+}
+
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
+
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+
+	if (PlayerController)
+	{
+
+		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+
+		if (Subsystem)
+		{
+			Subsystem->AddMappingContext(tpsMappingContext, 0);
+		}
+	}
+
+	//Input Action Binding
+	UEnhancedInputComponent* EnhancedInputComp = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+	if (EnhancedInputComp)
+	{
+		//MoveForward
+		EnhancedInputComp->BindAction(moveForawrdAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveForward);
+
+		//MoveRight
+		EnhancedInputComp->BindAction(moveRightAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRight);
+	}
+}
 
 void APlayerCharacter::Move()
 {
@@ -48,3 +106,4 @@ void APlayerCharacter::MoveRight(const FInputActionValue& Value)
 		AddMovementInput(RightDir, Movement);
 	}
 }
+
