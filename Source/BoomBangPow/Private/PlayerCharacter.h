@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
-#include "C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\InputActionValue.h"
+#include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
 /**
@@ -15,7 +16,25 @@ class APlayerCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 		
+public:
+	// Sets default values for this character's properties
+	APlayerCharacter();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+
 public: 
+
 	virtual void Move() override;
 
 	virtual void Attack() override;
@@ -26,9 +45,15 @@ public:
 
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
+	void TurnPitch(const FInputActionValue& Value);
+	void TurnYaw(const FInputActionValue& Value);
 
+public:
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+		class USpringArmComponent* springArmComp;
 
-
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+		class UCameraComponent* tpsCamComp;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -39,4 +64,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* moveRightAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* turnPitchAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* turnYawAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* jumpAction;
+
+
 };
