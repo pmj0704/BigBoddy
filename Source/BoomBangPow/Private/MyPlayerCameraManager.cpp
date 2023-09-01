@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "RHI.h"
 // 생성한 C++ 클래스의 구현 파일
 
 AMyPlayerCameraManager::AMyPlayerCameraManager()
