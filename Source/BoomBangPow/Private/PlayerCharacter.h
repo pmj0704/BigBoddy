@@ -45,9 +45,15 @@ public:
 
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
+	void TurnPitch(const FInputActionValue& Value);
+	void TurnYaw(const FInputActionValue& Value);
 
+public:
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+		class USpringArmComponent* springArmComp;
 
-
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+		class UCameraComponent* tpsCamComp;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -58,4 +64,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UInputAction* moveRightAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* turnPitchAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* turnYawAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* jumpAction;
+
+
 };

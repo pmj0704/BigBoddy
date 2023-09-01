@@ -3,9 +3,12 @@
 
 #include "PlayerCharacter.h"
 #include "EnhancedInputSubsystems.h"
-#include<GameFramework/CharacterMovementComponent.h>
-
+#include <GameFramework/CharacterMovementComponent.h>
 #include "EnhancedInputComponent.h"
+#include <GameFramework/SpringArmComponent.h>
+#include <Camera/CameraComponent.h>
+#include "EnhancedInputComponent.h"
+#include <Kismet/GameplayStatics.h>
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -18,6 +21,22 @@ APlayerCharacter::APlayerCharacter()
 	{
 		GetMesh()->SetSkeletalMesh(TempMesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
+	}
+
+	//카메라의 부모 컴포넌트 생성
+	springArmComp = CreateDefaultSubobject<USpringArmComponent>(L"SpringArmComp");
+	if (springArmComp)
+	{
+		springArmComp->SetupAttachment(RootComponent);
+		springArmComp->SetRelativeLocation(FVector(0, 70, 90));
+		springArmComp->TargetArmLength = 400;
+	}
+
+	//카메라 컴포넌트
+	tpsCamComp = CreateDefaultSubobject<UCameraComponent>(L"TPSCamComp");
+	if (tpsCamComp)
+	{
+		tpsCamComp->SetupAttachment(springArmComp);
 	}
 }
 
@@ -59,6 +78,12 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		//MoveRight
 		EnhancedInputComp->BindAction(moveRightAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRight);
+
+		//TurnPitch
+		EnhancedInputComp->BindAction(turnPitchAction, ETriggerEvent::Triggered, this, &APlayerCharacter::TurnPitch);
+
+		//TurnYaw
+		EnhancedInputComp->BindAction(turnYawAction, ETriggerEvent::Triggered, this, &APlayerCharacter::TurnYaw);
 	}
 }
 
@@ -104,6 +129,24 @@ void APlayerCharacter::MoveRight(const FInputActionValue& Value)
 		const FVector RightDir = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		AddMovementInput(RightDir, Movement);
+	}
+}
+
+void APlayerCharacter::TurnPitch(const FInputActionValue& Value)
+{
+	float Turn = -(Value.Get<float>());
+	if (Controller != nullptr)
+	{
+		AddControllerPitchInput(Turn);
+	}
+}
+
+void APlayerCharacter::TurnYaw(const FInputActionValue& Value)
+{
+	float Turn = Value.Get<float>();
+	if (Controller != nullptr)
+	{
+		AddControllerYawInput(Turn);
 	}
 }
 
