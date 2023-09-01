@@ -7,9 +7,15 @@
 #include "GameFramework/Character.h"
 #include "EnemyAI.generated.h"
 
-/**
- * 
- */
+// 사용할 상태 정의
+UENUM(BlueprintType)
+enum class EEnemyState : uint8
+{
+	Idle,
+	Stun,
+	Combat
+};
+
 UCLASS()
 class AEnemyAI : public AAIController
 {
@@ -21,9 +27,14 @@ public:
 	
 	static const FName Key_DefaultPos;
 	static const FName Key_PatrolPos;
+	static const FName Key_PlayerActor;
+	static const FName Key_PlayerActorPos;
+	static const FName Key_StateMode;
 
 	void RunAI();
 	void StopAI();
+
+	EEnemyState mState = EEnemyState::Idle;
 
 private:
 	UPROPERTY()
@@ -31,4 +42,14 @@ private:
 
 	UPROPERTY()
 	class UBlackboardData* BBAsset;
+
+	UPROPERTY()
+	UBlackboardComponent* BlackboardComp;
+
+public:
+	UFUNCTION()
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
+	UFUNCTION()
+	void CheckSightPlayer(AActor* SightActor);
 };

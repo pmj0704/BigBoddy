@@ -8,7 +8,7 @@ AEnemyCharacter::AEnemyCharacter()
 {
 	// 스켈레탈메시 데이터 로드
 	ConstructorHelpers::FObjectFinder<USkeletalMesh >
-		tempMesh(TEXT("'/Script/Engine.SkeletalMesh'/Game/Enemy/Model/vampire_a_lusth.vampire_a_lusth'"));
+		tempMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/SCK_Casual01/Models/Premade_Characters/MESH_PC_01.MESH_PC_01'"));
 	if (tempMesh.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
