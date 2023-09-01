@@ -53,4 +53,7 @@ public:
 
 	UFUNCTION()
 	void CheckSightPlayer(AActor* SightActor);
+
+	UFUNCTION(BlueprintPure, Category = "AI")
+	EEnemyState GetEnemyState();
 };
