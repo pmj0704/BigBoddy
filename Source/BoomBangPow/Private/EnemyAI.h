@@ -34,6 +34,7 @@ public:
 	void RunAI();
 	void StopAI();
 
+	UPROPERTY(Category = State, EditAnywhere, meta = (ClampMin = "0.0"))
 	EEnemyState mState = EEnemyState::Idle;
 
 private:
