@@ -29,16 +29,12 @@ public:
 	 bool bInvincible; // 무적
 public:
 
-	UFUNCTION(BlueprintCallable, Category = BaseFuction)
 	virtual void Move(); //이동
 
-	UFUNCTION(BlueprintCallable, Category = BaseFuction)
 	virtual void Attack(); //공격
 
-	UFUNCTION(BlueprintCallable, Category = BaseFuction)
 	virtual void Damaged(); //데미지 받았을때
 
-	UFUNCTION(BlueprintCallable, Category = BaseFuction)
 	virtual void ChangeHp(); //HP세팅
 	
 
