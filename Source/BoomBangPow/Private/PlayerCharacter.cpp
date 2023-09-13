@@ -2,7 +2,7 @@
 
 
 #include "PlayerCharacter.h"
-#include "C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\EnhancedInputComponent.h"
+#include "C:\UE_5.1\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\EnhancedInputComponent.h"
 
 void APlayerCharacter::Move()
 {

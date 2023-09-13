@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
-#include "C:\Program Files\Epic Games\UE_5.1\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\InputActionValue.h"
+#include "C:\UE_5.1\Engine\Plugins\EnhancedInput\Source\EnhancedInput\Public\InputActionValue.h"
 #include "PlayerCharacter.generated.h"
 
 /**
