@@ -73,3 +73,8 @@ void AEnemyAI::CheckSightPlayer(AActor* SightActor)
 	}
 }
 
+EEnemyState AEnemyAI::GetEnemyState()
+{
+	return mState;
+}
+
