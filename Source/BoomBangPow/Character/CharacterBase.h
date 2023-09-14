@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "BaseCharacter.h"
-//#include"Perception/AIPerceptionTypes.h"
 #include "GameFramework/Character.h"
-#include "EnemyCharacter.generated.h"
-
+#include "CharacterBase.generated.h"
 
 UCLASS()
-class AEnemyCharacter : public ACharacter
+class BOOMBANGPOW_API ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
-	AEnemyCharacter();
+
+public:
+	// Sets default values for this character's properties
+	ACharacterBase();
+
 };
