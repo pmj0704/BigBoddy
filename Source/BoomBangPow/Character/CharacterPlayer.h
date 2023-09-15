@@ -13,6 +13,15 @@
 UCLASS()
 class BOOMBANGPOW_API ACharacterPlayer : public ACharacterBase
 {
+
+
+
+
+
+
+
+
+
 	GENERATED_BODY()
 
 public:
