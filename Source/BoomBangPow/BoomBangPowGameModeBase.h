@@ -13,5 +13,4 @@ UCLASS()
 class BOOMBANGPOW_API ABoomBangPowGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
 };
