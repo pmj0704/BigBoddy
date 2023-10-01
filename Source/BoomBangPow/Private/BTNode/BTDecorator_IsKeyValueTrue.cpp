@@ -12,7 +12,7 @@ UBTDecorator_IsKeyValueTrue::UBTDecorator_IsKeyValueTrue()
 
 bool UBTDecorator_IsKeyValueTrue::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("KEY: %s"), *BlackboardKey.SelectedKeyName.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("KEY: %s"), *BlackboardKey.SelectedKeyName.ToString());
 	bool result = OwnerComp.GetBlackboardComponent()->GetValueAsBool(BlackboardKey.SelectedKeyName);
 	return result;
 }
