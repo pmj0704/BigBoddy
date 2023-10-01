@@ -1,20 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
+#include "EnemyCharacter.h"
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "GameFramework/Character.h"
 #include "EnemyAI.generated.h"
-
-// 사용할 상태 정의
-UENUM(BlueprintType)
-enum class EEnemyState : uint8
-{
-	Idle,
-	Stun,
-	Combat
-};
 
 UCLASS()
 class AEnemyAI : public AAIController
@@ -34,9 +27,6 @@ public:
 	void RunAI();
 	void StopAI();
 
-	UPROPERTY(Category = State, EditAnywhere, meta = (ClampMin = "0.0"))
-	EEnemyState mState = EEnemyState::Idle;
-
 private:
 	UPROPERTY()
 	class UBehaviorTree* BTAsset;
@@ -47,6 +37,8 @@ private:
 	UPROPERTY()
 	UBlackboardComponent* BlackboardComp;
 
+	virtual void BeginPlay() override;
+
 public:
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
@@ -54,6 +46,22 @@ public:
 	UFUNCTION()
 	void CheckSightPlayer(AActor* SightActor);
 
-	UFUNCTION(BlueprintPure, Category = "AI")
+	UFUNCTION(BlueprintCallable, Category = "State")
 	EEnemyState GetEnemyState();
+
+	UFUNCTION()
+	void SetEnemyState(EEnemyState setState);
+
+public:
+
+	UPROPERTY()
+	UAIPerceptionComponent* AIPerceptionComponent;
+
+	UPROPERTY()
+	UAISenseConfig_Sight* SightConfig;
+
+	UPROPERTY(Category = Speed, EditAnywhere)
+	float SightDistance = 1500.0f;
+
+	AEnemyCharacter* OwnerPawn;
 };

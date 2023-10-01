@@ -2,6 +2,8 @@
 
 
 #include "EnemyCharacter.h"
+#include "GameFramework/Character.h" // ACharacter 클래스를 사용하기 위한 헤더
+#include "GameFramework/CharacterMovementComponent.h" // UCharacterMovementComponent를 사용하기 위한 헤더
 #include "EnemyAI.h"
 
 AEnemyCharacter::AEnemyCharacter()
@@ -18,4 +20,37 @@ AEnemyCharacter::AEnemyCharacter()
 
 	AIControllerClass = AEnemyAI::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	ControlledCharacter = Cast<ACharacter>(this);
+	CharacterMovement = ControlledCharacter->GetCharacterMovement();
+}
+
+void AEnemyCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+			if (mState == EEnemyState::Idle)
+			{
+				ChangeSpeed(300.0f);
+			}
+			if (mState == EEnemyState::Stun)
+			{
+
+			}
+			if (mState == EEnemyState::Combat)
+			{
+				ChangeSpeed(150.0f);
+			}
+}
+
+void AEnemyCharacter::ChangeSpeed(float speed)
+{
+	if (ControlledCharacter)
+	{
+		// AI 캐릭터의 이동 속도 설정
+		if (CharacterMovement)
+		{
+			CharacterMovement->MaxWalkSpeed = speed;
+		}
+	}
 }
