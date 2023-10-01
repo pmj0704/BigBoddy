@@ -6,6 +6,7 @@
 //#include "BaseCharacter.h"
 //#include"Perception/AIPerceptionTypes.h"
 #include "GameFramework/Character.h"
+
 #include "EnemyCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -36,6 +37,23 @@ class AEnemyCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 		TObjectPtr<class UAnimMontage> ComboActionMontage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+		TObjectPtr<class UAnimMontage> HurtMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+		TObjectPtr<class UAnimMontage> DieMontage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
 		TObjectPtr<class UEnemyComboAttackData> ComboActionData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health, Meta = (AllowPrivateAccess = "true"))
+		float hp = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health, Meta = (AllowPrivateAccess = "true"))
+		float damage = 20;
+
+	UFUNCTION()
+		void hitEnemy();
+
+	void DestroyActor();
 };

@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h" // ACharacter 클래스를 사용하기 위한 헤더
 #include "GameFramework/CharacterMovementComponent.h" // UCharacterMovementComponent를 사용하기 위한 헤더
 #include "EnemyAI.h"
+#include "Engine/World.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -53,4 +55,25 @@ void AEnemyCharacter::ChangeSpeed(float speed)
 			CharacterMovement->MaxWalkSpeed = speed;
 		}
 	}
+}
+
+void AEnemyCharacter::hitEnemy()
+{
+	hp -= damage;
+
+	if (hp <= 0)
+	{
+		PlayAnimMontage(DieMontage);
+		FTimerHandle DestroyTimerHandle;
+		GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AEnemyCharacter::DestroyActor, 10.0f, false);
+	}
+	else
+	{
+		PlayAnimMontage(HurtMontage);
+	}
+}
+
+void AEnemyCharacter::DestroyActor()
+{
+	Super::Destroy();
 }
