@@ -13,15 +13,6 @@
 UCLASS()
 class BOOMBANGPOW_API ACharacterPlayer : public ACharacterBase
 {
-
-
-
-
-
-
-
-
-
 	GENERATED_BODY()
 
 public:
@@ -56,6 +47,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
 		TObjectPtr<class UInputAction> LookAction;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<class UInputAction> AttackAction;
+
 	void Move(const FInputActionValue& value);
 	void Look(const FInputActionValue& value);
+	void Attack();
+
+public:
+	void AttackHitCheck();
+
 };
