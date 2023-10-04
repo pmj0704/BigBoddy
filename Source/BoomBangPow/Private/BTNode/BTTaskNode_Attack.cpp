@@ -17,9 +17,6 @@ EBTNodeResult::Type UBTTaskNode_Attack::ExecuteTask(UBehaviorTreeComponent& Owne
 {
 	OwnerCharacter = OwnerComp.GetAIOwner()->GetCharacter();
 
-	ComboActionMontage = Cast<AEnemyCharacter>(OwnerCharacter)->ComboActionMontage;
-	ComboActionData = Cast<AEnemyCharacter>(OwnerCharacter)->ComboActionData;
-	UE_LOG(LogTemp, Warning, TEXT("COMBOATTACK"));
 	if (CurrentCombo == 0) 
 	{ 
 		ComboActionBegin();
