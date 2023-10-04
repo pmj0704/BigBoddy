@@ -6,6 +6,9 @@
 #include "GameFramework/CharacterMovementComponent.h" // UCharacterMovementComponent를 사용하기 위한 헤더
 #include "EnemyAI.h"
 #include "Engine/World.h"
+#include "Components/CapsuleComponent.h"
+#include "EnemyComboAttackData.h"
+#include "Engine/DamageEvents.h"
 
 
 AEnemyCharacter::AEnemyCharacter()
@@ -31,18 +34,18 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-			if (mState == EEnemyState::Idle)
-			{
-				ChangeSpeed(300.0f);
-			}
-			if (mState == EEnemyState::Stun)
-			{
-
-			}
-			if (mState == EEnemyState::Combat)
-			{
-				ChangeSpeed(150.0f);
-			}
+	if (mState == EEnemyState::Idle)
+	{
+		ChangeSpeed(300.0f);
+	}
+	if (mState == EEnemyState::Stun)
+	{
+		ChangeSpeed(0.0f);
+	}
+	if (mState == EEnemyState::Combat)
+	{
+		ChangeSpeed(150.0f);
+	}
 }
 
 void AEnemyCharacter::ChangeSpeed(float speed)
@@ -57,23 +60,58 @@ void AEnemyCharacter::ChangeSpeed(float speed)
 	}
 }
 
-void AEnemyCharacter::hitEnemy()
-{
-	hp -= damage;
-
-	if (hp <= 0)
-	{
-		PlayAnimMontage(DieMontage);
-		FTimerHandle DestroyTimerHandle;
-		GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AEnemyCharacter::DestroyActor, 10.0f, false);
-	}
-	else
-	{
-		PlayAnimMontage(HurtMontage);
-	}
-}
-
 void AEnemyCharacter::DestroyActor()
 {
 	Super::Destroy();
+}
+
+float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	hp -= damage;
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	if (hp <= 0)
+	{
+		AnimInstance->StopAllMontages(0.0f);
+		mState = EEnemyState::Dead;
+		AnimInstance->Montage_Play(DieMontage, 1.0f);
+	}
+	else
+	{
+		mState = EEnemyState::Stun;
+		UE_LOG(LogTemp, Log, TEXT("%s", mState));
+		AnimInstance->StopAllMontages(0.0f);
+	}
+	return DamageAmount;
+}
+
+void AEnemyCharacter::AttackHitCheck()
+{
+	FHitResult OutHitResult;
+	FCollisionQueryParams Parmas(SCENE_QUERY_STAT(Attack), false, this);
+
+
+	const float AttackRange = 40.0f;
+	const float AttackRadius = 50.0f;
+	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+
+	const FVector End = Start + GetActorForwardVector() * AttackRange;
+
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(AttackRadius), Parmas);
+
+	if (HitDetected)
+	{
+		FDamageEvent DamageEvent;
+		OutHitResult.GetActor()->TakeDamage(damage, DamageEvent, GetController(), this);
+	}
+#if ENABLE_DRAW_DEBUG
+	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+	float CapsuleHalfHeight = AttackRange * 0.5f;
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+
+	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
+		DrawColor, false, 5.0f);
+
+
+#endif // ENABLE_DRAW_DEBUG
 }

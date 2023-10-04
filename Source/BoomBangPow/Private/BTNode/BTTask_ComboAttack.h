@@ -13,5 +13,8 @@ UCLASS()
 class UBTTask_ComboAttack : public UBTTaskNode
 {
 	GENERATED_BODY()
-	
+	UBTTask_ComboAttack();
+
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
 };
