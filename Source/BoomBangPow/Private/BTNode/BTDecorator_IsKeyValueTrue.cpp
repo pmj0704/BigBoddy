@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "BTNode/BTDecorator_IsKeyValueTrue.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnemyAI.h"
 #include "AIController.h"
-#include "BTNode/BTDecorator_IsKeyValueTrue.h"
 
 UBTDecorator_IsKeyValueTrue::UBTDecorator_IsKeyValueTrue()
 {
