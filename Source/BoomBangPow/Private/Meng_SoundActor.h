@@ -27,6 +27,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound)
 		USoundBase* sound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound)
+	UUserWidget* Widget;
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound)
 	//	Synes 
 
