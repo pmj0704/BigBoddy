@@ -7,8 +7,9 @@
 #include "Interface/AnimationAttackInterface.h"
 #include "InputActionValue.h"
 #include "Engine/DataAsset.h"
+#include "PlayerUI.h"
+#include "Meng_SoundActor.h"
 #include "CharacterPlayer.generated.h"
-
 
 UCLASS()
 class BOOMBANGPOW_API ACharacterPlayer : public ACharacterBase, public IAnimationAttackInterface
@@ -31,6 +32,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack)
+	TObjectPtr<class AMeng_SoundActor> soundActor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = "true"))
+	UPlayerUI* playerUI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	float hp = 100;
@@ -98,4 +105,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State, Meta = (AllowPrivateAccess = "true"))
 	bool isDead = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Attack, Meta = (AllowPrivateAccess = "true"))
+	float soundScale = 0.0f;
 };
