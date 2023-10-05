@@ -79,7 +79,8 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	else
 	{
 		mState = EEnemyState::Stun;
-		UE_LOG(LogTemp, Log, TEXT("%s", mState));
+		//UE_LOG(LogTemp, Log, TEXT("%s", mState));
+		UE_LOG(LogTemp, Log, TEXT("%s"), mState);
 		AnimInstance->StopAllMontages(0.0f);
 	}
 	return DamageAmount;
