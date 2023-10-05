@@ -14,6 +14,7 @@
 #include "Meng_SoundActor.h"
 #include "Collision.h"
 #include "EnemyComboAttackData.h"
+#include "GameFramework/Actor.h" 
 #include "Engine/DataAsset.h"
 
 ACharacterPlayer::ACharacterPlayer()
@@ -74,8 +75,6 @@ void ACharacterPlayer::BeginPlay()
 	{
 		subSystem->AddMappingContext(DefaultMappingContext, 0);
 	}
-
-	playerUI = Cast<UPlayerUI>(soundActor->Widget);
 }
 
 void ACharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -116,8 +115,12 @@ void ACharacterPlayer::Look(const FInputActionValue& value)
 
 void ACharacterPlayer::Attack()
 {
-	UE_LOG(LogTemp, Log, TEXT("Attack"));
-	ProcessComboCommand();
+	if (canAnim)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Attack"));
+		canAnim = false;
+		ProcessComboCommand();
+	}
 }
 
 void ACharacterPlayer::AttackHitCheck()
@@ -208,43 +211,58 @@ void ACharacterPlayer::PlayDeadAnimation()
 void ACharacterPlayer::ProcessComboCommand()
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	float attackDamage = soundScale * 10;
+	float attackDamage = soundScale * 100;
 
-	if (playerUI)
-	{
-		soundScale = playerUI->Damage;
-	}
+	UE_LOG(LogTemp, Log, TEXT("%f"), attackDamage);
 
-	if (attackDamage >= 0 && attackDamage < 16)
+	if (attackDamage >= 0.0f && attackDamage < 20.0f)
 	{
 		CurrentCombo = 1;
 	}
-	else if (attackDamage >= 16 && attackDamage < 32)
+	else if (attackDamage >= 20.0f && attackDamage < 30.0f)
 	{
 		CurrentCombo = 2;
 	}
-	else if (attackDamage >= 32 && attackDamage < 16)
+	else if (attackDamage >= 30.0f && attackDamage < 40.0f)
 	{
 		CurrentCombo = 3;
 	}
-	else if (attackDamage >= 0 && attackDamage < 16)
+	else if (attackDamage >= 40.0f && attackDamage < 50.0f)
 	{
 		CurrentCombo = 4;
 	}
-	else if (attackDamage >= 0 && attackDamage < 16)
+	else if (attackDamage >= 50.0f && attackDamage < 60.0f)
 	{
 		CurrentCombo = 5;
 	}
-	else if (attackDamage >= 0 && attackDamage < 16)
+	else if (attackDamage >= 60.0f && attackDamage < 100.0f)
 	{
 		CurrentCombo = 6;
 	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Error"));
+	}
+
+	if (!ComboTimerHandle.IsValid())
+	{
+		HasNextComboCommand = false;
+	}
+	else
+	{
+		HasNextComboCommand = true;
+	}
+
+
+	UE_LOG(LogTemp, Log, TEXT("AttackAs: %d"), CurrentCombo);
 	ComboActionBegin();
 }
 
 void ACharacterPlayer::ComboActionBegin()
 {
 	// Animation Setting
+	UE_LOG(LogTemp, Log, TEXT("ComboActionBegin"), CurrentCombo);
+
 	const float AttackSpeedRate = 1.0f;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
@@ -259,6 +277,7 @@ void ACharacterPlayer::ComboActionBegin()
 
 void ACharacterPlayer::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
+	UE_LOG(LogTemp, Log, TEXT("ComboActionEnd"), CurrentCombo);
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
@@ -284,6 +303,9 @@ void ACharacterPlayer::ComboCheck()
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		FName NextSection = *FString::Printf(TEXT("%s%d"),
 			*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
+		UE_LOG(LogTemp, Log, TEXT("%s%d"),
+			*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
+
 		AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
 		SetComboCheckTimer();
 		HasNextComboCommand = false;
