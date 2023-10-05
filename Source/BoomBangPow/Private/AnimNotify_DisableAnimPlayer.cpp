@@ -13,5 +13,9 @@ void UAnimNotify_DisableAnimPlayer::Notify(USkeletalMeshComponent* MeshComp, UAn
     // OwnerActor가 ACharacter 클래스의 인스턴스인지 확인합니다.
     ACharacterPlayer* Character = Cast<ACharacterPlayer>(OwnerActor);
 
-    if (Character) Character->canAnim = true;
+    if (Character)
+    {
+        Character->canAnim = true;
+        Character->ReturnWalking();
+    }
 }

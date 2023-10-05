@@ -93,9 +93,10 @@ protected:
 	void SetComboCheckTimer();
 	void ComboCheck();
 
-	void ReturnWalking(UAnimMontage* TargetMontage, bool IsProperlyEnded);
 
 public:
+	void ReturnWalking();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State, Meta = (AllowPrivateAccess = "true"))
 	bool isDead = false;
 
