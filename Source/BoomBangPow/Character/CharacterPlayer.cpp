@@ -92,25 +92,29 @@ void ACharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void ACharacterPlayer::Move(const FInputActionValue& value)
 {
-	FVector2D MovementVector = value.Get<FVector2D>();
-	const FRotator Rotation = Controller->GetControlRotation();
-	const FRotator YawRotation(0, Rotation.Yaw, 0);
+	if (canAnim)
+	{
+		FVector2D MovementVector = value.Get<FVector2D>();
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-	AddMovementInput(ForwardDirection, MovementVector.X);
-	AddMovementInput(RightDirection, MovementVector.Y);
-
-	ComboActionEnd(ComboActionMontage, true);
+		AddMovementInput(ForwardDirection, MovementVector.X);
+		AddMovementInput(RightDirection, MovementVector.Y);
+	}
 }
 
 void ACharacterPlayer::Look(const FInputActionValue& value)
 {
-	FVector2D LookAxisVector = value.Get<FVector2D>();
+	if (canAnim)
+	{
+		FVector2D LookAxisVector = value.Get<FVector2D>();
 
-	AddControllerYawInput(LookAxisVector.X);
-	AddControllerPitchInput(LookAxisVector.Y);
+		AddControllerYawInput(LookAxisVector.X);
+		AddControllerPitchInput(LookAxisVector.Y);
+	}
 }
 
 void ACharacterPlayer::Attack()
@@ -118,7 +122,6 @@ void ACharacterPlayer::Attack()
 	if (canAnim)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Attack"));
-		canAnim = false;
 		ProcessComboCommand();
 	}
 }
@@ -178,7 +181,7 @@ void ACharacterPlayer::SetHit(float _Damage)
 	}
 }
 
-void ACharacterPlayer::ReturnWalking(UAnimMontage* TargetMontage, bool IsProperlyEnded)
+void ACharacterPlayer::ReturnWalking()
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
@@ -188,9 +191,9 @@ void ACharacterPlayer::PlayHitAnimation()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->Montage_Play(HurtMontage, 1.0f);
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &ACharacterPlayer::ReturnWalking);
-	AnimInstance->Montage_SetEndDelegate(EndDelegate, HurtMontage);
+	// EndDelegate;
+//	EndDelegate.BindUObject(this, &ACharacterPlayer::ReturnWalking);
+	//AnimInstance->Montage_SetEndDelegate(EndDelegate, HurtMontage);
 }
 
 void ACharacterPlayer::SetDead()
@@ -244,18 +247,28 @@ void ACharacterPlayer::ProcessComboCommand()
 		UE_LOG(LogTemp, Log, TEXT("Error"));
 	}
 
-	if (!ComboTimerHandle.IsValid())
-	{
-		HasNextComboCommand = false;
-	}
-	else
-	{
-		HasNextComboCommand = true;
-	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	FName NextSection = *FString::Printf(TEXT("%s%d"),
+		*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
+	UE_LOG(LogTemp, Log, TEXT("%s%d"),
+		*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
+
+	canAnim = false;
+	AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
+
+	//if (!ComboTimerHandle.IsValid())
+	//{
+	//	HasNextComboCommand = false;
+	//}
+	//else
+	//{
+	//	HasNextComboCommand = true;
+	//}
 
 
 	UE_LOG(LogTemp, Log, TEXT("AttackAs: %d"), CurrentCombo);
-	ComboActionBegin();
+	//ComboActionBegin();
 }
 
 void ACharacterPlayer::ComboActionBegin()
@@ -278,7 +291,7 @@ void ACharacterPlayer::ComboActionBegin()
 void ACharacterPlayer::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
 	UE_LOG(LogTemp, Log, TEXT("ComboActionEnd"), CurrentCombo);
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }
 
 void ACharacterPlayer::SetComboCheckTimer()
