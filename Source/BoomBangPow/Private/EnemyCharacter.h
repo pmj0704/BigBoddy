@@ -47,6 +47,9 @@ class AEnemyCharacter : public ACharacter, public IAnimationAttackInterface
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health, Meta = (AllowPrivateAccess = "true"))
 		int damage = 20.0f;
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health, Meta = (AllowPrivateAccess = "true"))
+		bool canAnim = true;
+
 	void DestroyActor();
 
 public:
