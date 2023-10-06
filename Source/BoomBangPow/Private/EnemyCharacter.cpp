@@ -8,6 +8,7 @@
 #include "Engine/World.h"
 #include "Components/CapsuleComponent.h"
 #include "EnemyComboAttackData.h"
+#include "TimerManager.h" // 타이머 관리자를 사용하기 
 #include "Engine/DamageEvents.h"
 
 
@@ -70,19 +71,41 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	hp -= damage;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 
+	spawnDamage = true;
+	AnimInstance->StopAllMontages(0.0f);
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	float DelayInSeconds = 0.001; // 10초
+	FTimerHandle SpawnDamageTimerHandle; // 타이머 핸들을 정의합니다.
+	TimerManager.SetTimer(SpawnDamageTimerHandle, this, &AEnemyCharacter::EnableSpawnDamage, DelayInSeconds, false);
+
 	if (hp <= 0)
 	{
-		AnimInstance->StopAllMontages(0.0f);
 		mState = EEnemyState::Dead;
 		AnimInstance->Montage_Play(DieMontage, 1.0f);
 	}
 	else
 	{
-		AnimInstance->StopAllMontages(0.0f);
 		mState = EEnemyState::Stun;
-		UE_LOG(LogTemp, Log, TEXT("%s"), mState);
+
+		//UE_LOG(LogTemp, Log, TEXT("%s"), mState);
 	}
 	return DamageAmount;
+}
+
+void AEnemyCharacter::EnableSpawnDamage()
+{
+	spawnDamage = false;
+}
+
+void AEnemyCharacter::DisableMovement()
+{
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	float DelayInSeconds = 3.0f; // 10초
+	FTimerHandle SpawnDamageTimerHandle; // 타이머 핸들을 정의합니다.
+	TimerManager.SetTimer(SpawnDamageTimerHandle, this, &AEnemyCharacter::DestroyActor, DelayInSeconds, false);
 }
 
 void AEnemyCharacter::AttackHitCheck()
@@ -104,14 +127,14 @@ void AEnemyCharacter::AttackHitCheck()
 		FDamageEvent DamageEvent;
 		OutHitResult.GetActor()->TakeDamage(damage, DamageEvent, GetController(), this);
 	}
-#if ENABLE_DRAW_DEBUG
-	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
-	float CapsuleHalfHeight = AttackRange * 0.5f;
-	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
-
-	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
-		DrawColor, false, 5.0f);
-
-
-#endif // ENABLE_DRAW_DEBUG
+//#if ENABLE_DRAW_DEBUG
+//	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+//	float CapsuleHalfHeight = AttackRange * 0.5f;
+//	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+//
+//	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
+//		DrawColor, false, 5.0f);
+//
+//
+//#endif // ENABLE_DRAW_DEBUG
 }
