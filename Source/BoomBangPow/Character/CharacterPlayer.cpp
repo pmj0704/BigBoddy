@@ -213,7 +213,6 @@ void ACharacterPlayer::PlayDeadAnimation()
 
 void ACharacterPlayer::ProcessComboCommand()
 {
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	float attackDamage = soundScale * 100;
 
 	UE_LOG(LogTemp, Log, TEXT("%f"), attackDamage);
@@ -221,26 +220,32 @@ void ACharacterPlayer::ProcessComboCommand()
 	if (attackDamage >= 0.0f && attackDamage < 20.0f)
 	{
 		CurrentCombo = 1;
+		Damage = 5;
 	}
 	else if (attackDamage >= 20.0f && attackDamage < 30.0f)
 	{
 		CurrentCombo = 2;
+		Damage = 10;
 	}
 	else if (attackDamage >= 30.0f && attackDamage < 40.0f)
 	{
 		CurrentCombo = 3;
+		Damage = 15;
 	}
 	else if (attackDamage >= 40.0f && attackDamage < 50.0f)
 	{
 		CurrentCombo = 4;
+		Damage = 20;
 	}
 	else if (attackDamage >= 50.0f && attackDamage < 60.0f)
 	{
 		CurrentCombo = 5;
+		Damage = 25;
 	}
 	else if (attackDamage >= 60.0f && attackDamage < 100.0f)
 	{
 		CurrentCombo = 6;
+		Damage = 30;
 	}
 	else
 	{
@@ -254,8 +259,11 @@ void ACharacterPlayer::ProcessComboCommand()
 	UE_LOG(LogTemp, Log, TEXT("%s%d"),
 		*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
 
+	const float AttackSpeedRate = 1.0f;
 	canAnim = false;
 	AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
+	AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
 	//if (!ComboTimerHandle.IsValid())
 	//{

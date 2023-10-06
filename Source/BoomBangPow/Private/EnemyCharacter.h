@@ -50,9 +50,15 @@ class AEnemyCharacter : public ACharacter, public IAnimationAttackInterface
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health, Meta = (AllowPrivateAccess = "true"))
 		bool canAnim = true;
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health, Meta = (AllowPrivateAccess = "true"))
+		bool spawnDamage = false;
+
 	void DestroyActor();
+
+	void EnableSpawnDamage();
 
 public:
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	void AttackHitCheck();
+	void DisableMovement();
 };
