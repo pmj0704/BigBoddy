@@ -256,13 +256,16 @@ void ACharacterPlayer::ProcessComboCommand()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName NextSection = *FString::Printf(TEXT("%s%d"),
 		*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
+
+	const float AttackSpeedRate = 1.0f;
+	PlayAnimMontage(ComboActionMontage, AttackSpeedRate, NextSection);
+	//AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
 	UE_LOG(LogTemp, Log, TEXT("%s%d"),
 		*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
 
-	const float AttackSpeedRate = 1.0f;
 	canAnim = false;
-	AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
-	AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
+
+	//AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
 	//if (!ComboTimerHandle.IsValid())
