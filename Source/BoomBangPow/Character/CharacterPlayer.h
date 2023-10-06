@@ -87,13 +87,6 @@ protected:
 
 	void ProcessComboCommand();
 
-	void ComboActionBegin();
-	void ComboActionEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
-
-	void SetComboCheckTimer();
-	void ComboCheck();
-
-
 public:
 	void ReturnWalking();
 
@@ -105,4 +98,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = State, Meta = (AllowPrivateAccess = "true"))
 	bool canAnim = true;
+
+	void EndAttack(UAnimMontage* TargetMontage, bool IsProperlyEnded);
+	void EndAttacking();
 };

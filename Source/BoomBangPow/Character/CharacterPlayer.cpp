@@ -14,7 +14,8 @@
 #include "Meng_SoundActor.h"
 #include "Collision.h"
 #include "EnemyComboAttackData.h"
-#include "GameFramework/Actor.h" 
+#include "GameFramework/Actor.h"
+#include "TimerManager.h" 
 #include "Engine/DataAsset.h"
 
 ACharacterPlayer::ACharacterPlayer()
@@ -146,16 +147,16 @@ void ACharacterPlayer::AttackHitCheck()
 		FDamageEvent DamageEvent;
 		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 	}
-#if ENABLE_DRAW_DEBUG
-	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
-	float CapsuleHalfHeight = AttackRange * 0.5f;
-	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
-
-	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
-		DrawColor, false, 5.0f);
-
-
-#endif // ENABLE_DRAW_DEBUG
+//#if ENABLE_DRAW_DEBUG
+//	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+//	float CapsuleHalfHeight = AttackRange * 0.5f;
+//	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+//
+//	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(),
+//		DrawColor, false, 5.0f);
+//
+//
+//#endif // ENABLE_DRAW_DEBUG
 
 }
 
@@ -184,6 +185,18 @@ void ACharacterPlayer::SetHit(float _Damage)
 void ACharacterPlayer::ReturnWalking()
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+}
+
+void ACharacterPlayer::EndAttack(UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	canAnim = true;
+}
+
+void ACharacterPlayer::EndAttacking()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	canAnim = true;
 }
 
 void ACharacterPlayer::PlayHitAnimation()
@@ -258,80 +271,25 @@ void ACharacterPlayer::ProcessComboCommand()
 		*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
 
 	const float AttackSpeedRate = 1.0f;
+
 	PlayAnimMontage(ComboActionMontage, AttackSpeedRate, NextSection);
-	//AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &ACharacterPlayer::EndAttack);
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, ComboActionMontage);
+
+	FTimerManager& TimerManager = GetWorld()->GetTimerManager();
+	float DelayInSeconds = 1.0f; // 1ÃÊ
+	FTimerHandle TimerHandle;
+	TimerManager.SetTimer(TimerHandle, this, &ACharacterPlayer::EndAttacking, DelayInSeconds, false);
+
 	UE_LOG(LogTemp, Log, TEXT("%s%d"),
 		*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
 
 	canAnim = false;
 
-	//AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-
-	//if (!ComboTimerHandle.IsValid())
-	//{
-	//	HasNextComboCommand = false;
-	//}
-	//else
-	//{
-	//	HasNextComboCommand = true;
-	//}
 
 
 	UE_LOG(LogTemp, Log, TEXT("AttackAs: %d"), CurrentCombo);
-	//ComboActionBegin();
-}
-
-void ACharacterPlayer::ComboActionBegin()
-{
-	// Animation Setting
-	UE_LOG(LogTemp, Log, TEXT("ComboActionBegin"), CurrentCombo);
-
-	const float AttackSpeedRate = 1.0f;
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
-	// Montage End Delegate
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &ACharacterPlayer::ComboActionEnd);
-	AnimInstance->Montage_SetEndDelegate(EndDelegate, ComboActionMontage);
-
-	ComboTimerHandle.Invalidate();
-	SetComboCheckTimer();
-}
-
-void ACharacterPlayer::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
-{
-	UE_LOG(LogTemp, Log, TEXT("ComboActionEnd"), CurrentCombo);
-	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-}
-
-void ACharacterPlayer::SetComboCheckTimer()
-{
-	int32 ComboIndex = CurrentCombo - 1;
-	ensure(ComboActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
-	const float AttackSpeedRate = 1.0f;
-	float ComboEffectiveTime = (ComboActionData->EffectiveFrameCount[ComboIndex] /
-		ComboActionData->FrameRate) / AttackSpeedRate;
-	if (ComboEffectiveTime > 0.0f)
-	{
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this,
-			&ACharacterPlayer::ComboCheck, ComboEffectiveTime, false);
-	}
-}
-void ACharacterPlayer::ComboCheck()
-{
-	UE_LOG(LogTemp, Log, TEXT("ComboCheck"));
-	ComboTimerHandle.Invalidate();
-	if (HasNextComboCommand)
-	{
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		FName NextSection = *FString::Printf(TEXT("%s%d"),
-			*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
-		UE_LOG(LogTemp, Log, TEXT("%s%d"),
-			*ComboActionData->MontageSectionNamePrefix, CurrentCombo);
-
-		AnimInstance->Montage_JumpToSection(NextSection, ComboActionMontage);
-		SetComboCheckTimer();
-		HasNextComboCommand = false;
-	}
 }
